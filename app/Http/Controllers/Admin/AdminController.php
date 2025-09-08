@@ -75,12 +75,16 @@ class AdminController extends Controller
     {
         $search = $request->input('search');
 
-        $jadwals = Jadwal::when($search, function($query, $search) {
-            return $query->where('tujuan', 'like', "%{$search}%")
-                        ->orWhere('tanggal', 'like', "%{$search}%")
-                        ->orWhere('jam', 'like', "%{$search}%")
-                        ->orWhere('harga', 'like', "%{$search}%");
-        })->latest()->get();
+        $jadwals = Jadwal::with('rute')
+            ->when($search, function($query, $search) {
+                return $query->whereHas('rute', function($q) use ($search) {
+                    $q->where('kota_asal', 'like', "%{$search}%")
+                      ->orWhere('kota_tujuan', 'like', "%{$search}%");
+                })
+                ->orWhere('tanggal', 'like', "%{$search}%")
+                ->orWhere('jam', 'like', "%{$search}%")
+                ->orWhere('harga', 'like', "%{$search}%");
+            })->latest()->paginate(10);
 
         return view('admin.jadwals', compact('jadwals', 'search'));
     }
@@ -88,20 +92,23 @@ class AdminController extends Controller
     // Form tambah jadwal
     public function createJadwal()
     {
-        return view('admin.jadwals.create');
+        $rutes = \App\Models\Rute::all();
+        $mobils = \App\Models\Mobil::all();
+        return view('admin.jadwals.create', compact('rutes', 'mobils'));
     }
 
     // Simpan jadwal baru
     public function storeJadwal(Request $request)
     {
         $request->validate([
-            'tujuan' => 'required|string',
+            'rute_id' => 'required|exists:rutes,id',
+            'mobil_id' => 'required|exists:mobils,id',
             'tanggal' => 'required|date',
             'jam' => 'required',
             'harga' => 'required|integer',
         ]);
 
-        Jadwal::create($request->only(['tujuan', 'tanggal', 'jam', 'harga']));
+        Jadwal::create($request->only(['rute_id', 'mobil_id', 'tanggal', 'jam', 'harga']));
 
         return redirect()->route('admin.jadwals')->with('success', 'Jadwal berhasil ditambahkan');
     }
@@ -109,20 +116,21 @@ class AdminController extends Controller
     // Form edit jadwal
     public function editJadwal(Jadwal $jadwal)
     {
-        return view('admin.jadwals.edit', compact('jadwal'));
+        $rutes = \App\Models\Rute::all();
+        return view('admin.jadwals.edit', compact('jadwal', 'rutes'));
     }
 
     // Update jadwal
     public function updateJadwal(Request $request, Jadwal $jadwal)
     {
         $request->validate([
-            'tujuan' => 'required|string',
+            'rute_id' => 'required|exists:rutes,id',
             'tanggal' => 'required|date',
             'jam' => 'required',
             'harga' => 'required|integer',
         ]);
 
-        $jadwal->update($request->only(['tujuan', 'tanggal', 'jam', 'harga']));
+        $jadwal->update($request->only(['rute_id', 'tanggal', 'jam', 'harga']));
 
         return redirect()->route('admin.jadwals')->with('success', 'Jadwal berhasil diperbarui');
     }
@@ -150,7 +158,7 @@ class AdminController extends Controller
                        })
                        ->orWhere('seat_number', 'like', "%{$search}%")
                        ->orWhere('status', 'like', "%{$search}%");
-            })->latest()->get();
+            })->latest()->paginate(10);
 
         return view('admin.bookings', compact('bookings', 'search'));
     }
@@ -164,7 +172,7 @@ class AdminController extends Controller
             return $query->where('name', 'like', "%{$search}%")
                          ->orWhere('email', 'like', "%{$search}%")
                          ->orWhere('role', 'like', "%{$search}%");
-        })->get();
+        })->paginate(10);
 
         return view('admin.pelanggan', compact('customers', 'search'));
     }
@@ -284,7 +292,7 @@ class AdminController extends Controller
                   ->orWhere('status_rute', 'like', "%{$search}%");
         }
 
-        $rutes = $query->latest()->get();
+        $rutes = $query->latest()->paginate(10);
 
         return view('admin.rute', compact('rutes', 'search'));
     }
@@ -366,7 +374,7 @@ class AdminController extends Controller
                   ->orWhere('status', 'like', "%{$search}%");
         }
 
-        $mobils = $query->latest()->get();
+        $mobils = $query->latest()->paginate(10);
 
         return view('admin.mobil', compact('mobils', 'search'));
     }

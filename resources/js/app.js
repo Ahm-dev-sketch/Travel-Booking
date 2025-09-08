@@ -3,6 +3,37 @@ import "aos/dist/aos.css";
 
 AOS.init();
 
+// ======================
+// Session flash messages
+// ======================
+document.addEventListener('DOMContentLoaded', function () {
+    // Success message
+    const successMessage = document.querySelector('[data-success-message]');
+    if (successMessage) {
+        Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: successMessage.dataset.successMessage,
+            confirmButtonText: "OK",
+            showConfirmButton: true,
+            timer: null
+        });
+    }
+
+    // Error message
+    const errorMessage = document.querySelector('[data-error-message]');
+    if (errorMessage) {
+        Swal.fire({
+            icon: "error",
+            title: "Gagal",
+            text: errorMessage.dataset.errorMessage,
+            confirmButtonText: "OK",
+            showConfirmButton: true,
+            timer: null
+        });
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     // ======================
     // Toggle menu hamburger
@@ -113,71 +144,129 @@ document.addEventListener("DOMContentLoaded", () => {
     setupToggle('toggle-total-revenue-visibility', 'total-revenue-amount', 'eye-icon-total');
     setupToggle('toggle-monthly-revenue-visibility', 'monthly-revenue-amount', 'eye-icon-monthly');
 
-    // ======================
-    // BOOKING (kursi realtime)
-    // ======================
-    const jadwalSelect = document.getElementById('jadwal_id');
-    const seatCheckboxes = document.querySelectorAll('.seat-checkbox');
-    const bookingForm = document.getElementById('booking-form');
+        // ======================
+        // BOOKING (kursi realtime)
+        // ======================
+        const jadwalSelect = document.getElementById('jadwal_id');
+        const seatCheckboxes = document.querySelectorAll('.seat-checkbox');
+        const bookingForm = document.getElementById('booking-form');
 
-    if (jadwalSelect) {
-        jadwalSelect.addEventListener('change', function () {
-            const jadwalId = this.value;
+        if (jadwalSelect) {
+            jadwalSelect.addEventListener('change', function () {
+                const jadwalId = this.value;
 
-            if (jadwalId) {
-                fetch(`/jadwal/${jadwalId}/seats`)
-                    .then(res => res.json())
-                    .then(bookedSeats => {
-                        seatCheckboxes.forEach(cb => {
-                            const seatDiv = cb.nextElementSibling;
-                            if (bookedSeats.includes(cb.value)) {
-                                cb.disabled = true;
-                                cb.checked = false;
-                                seatDiv.className = "w-16 h-16 flex items-center justify-center rounded bg-red-500 text-white cursor-not-allowed";
-                            } else {
-                                cb.disabled = false;
-                                seatDiv.className = "w-16 h-16 flex items-center justify-center rounded bg-green-500 text-white hover:bg-blue-500";
-                            }
+                if (jadwalId) {
+                    fetch(`/jadwal/${jadwalId}/seats`)
+                        .then(res => res.json())
+                        .then(bookedSeats => {
+                            seatCheckboxes.forEach(cb => {
+                                const seatDiv = cb.nextElementSibling;
+                                if (bookedSeats.includes(cb.value)) {
+                                    cb.disabled = true;
+                                    cb.checked = false;
+                                    seatDiv.className =
+                                        "w-16 h-16 flex items-center justify-center rounded bg-red-500 text-white cursor-not-allowed";
+                                } else {
+                                    cb.disabled = false;
+                                    seatDiv.className =
+                                        "w-16 h-16 flex items-center justify-center rounded bg-green-500 text-white hover:bg-blue-500";
+                                }
+                            });
                         });
+                } else {
+                    // reset ke default abu-abu
+                    seatCheckboxes.forEach(cb => {
+                        cb.disabled = true;
+                        cb.checked = false;
+                        cb.nextElementSibling.className =
+                            "w-16 h-16 flex items-center justify-center rounded bg-gray-300 text-black";
                     });
-            } else {
-                // reset ke default abu-abu
-                seatCheckboxes.forEach(cb => {
-                    cb.disabled = true;
-                    cb.checked = false;
-                    cb.nextElementSibling.className = "w-16 h-16 flex items-center justify-center rounded bg-gray-300 text-black";
-                });
-            }
-        });
-    }
+                }
+            });
+        }
 
-    // highlight kursi saat dipilih
-    seatCheckboxes.forEach(cb => {
-        cb.addEventListener('change', function () {
-            const seatDiv = this.nextElementSibling;
-            if (this.checked) {
-                seatDiv.classList.add("ring-4", "ring-yellow-400");
-            } else {
-                seatDiv.classList.remove("ring-4", "ring-yellow-400");
+        // ======================
+        // STEP 3 (pilih kursi + hitung total)
+        // ======================
+        const selectedSeatsDisplay = document.getElementById('selected-seats');
+        const totalPriceDisplay = document.getElementById('total-price');
+        const bookButton = document.getElementById('book-button');
+        const seatForm = document.getElementById('seat-form');
+        const pricePerSeat = seatForm ? parseInt(seatForm.dataset.pricePerSeat) : 0;
+
+        function updateDisplay() {
+            const selectedSeats = Array.from(seatCheckboxes)
+                .filter(cb => cb.checked && !cb.disabled)
+                .map(cb => cb.value);
+
+            // Update kursi terpilih
+            if (selectedSeatsDisplay) {
+                selectedSeatsDisplay.textContent =
+                    selectedSeats.length > 0
+                        ? selectedSeats.join(', ')
+                        : 'Belum ada kursi dipilih';
             }
+
+            // Update total harga
+            if (totalPriceDisplay) {
+                const totalPrice = selectedSeats.length * pricePerSeat;
+                totalPriceDisplay.textContent =
+                    'Rp ' + totalPrice.toLocaleString('id-ID');
+            }
+
+            // Enable/disable tombol pesan
+            if (bookButton) {
+                bookButton.disabled = selectedSeats.length === 0;
+            }
+
+            // Highlight kursi dipilih
+            seatCheckboxes.forEach(cb => {
+                const seatBox = cb.nextElementSibling;
+                if (!cb.disabled) {
+                    if (cb.checked) {
+                        seatBox.classList.add("bg-green-500", "text-white", "border-green-500");
+                        seatBox.classList.remove("bg-gray-200", "text-gray-700", "border-gray-300");
+                    } else {
+                        seatBox.classList.add("bg-gray-200", "text-gray-700", "border-gray-300");
+                        seatBox.classList.remove("bg-green-500", "text-white", "border-green-500");
+                    }
+                }
+            });
+        }
+
+        // Event untuk update display
+        seatCheckboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                updateDisplay();
+                // tambahan highlight ring kuning
+                const seatDiv = this.nextElementSibling;
+                if (this.checked) {
+                    seatDiv.classList.add("ring-4", "ring-yellow-400");
+                } else {
+                    seatDiv.classList.remove("ring-4", "ring-yellow-400");
+                }
+            });
         });
+
+        // Validasi minimal 1 kursi
+        if (seatForm) {
+            seatForm.addEventListener('submit', function (e) {
+                const checked = document.querySelectorAll('.seat-checkbox:checked').length;
+                if (checked === 0) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Peringatan',
+                        text: 'Pilih minimal 1 kursi!',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        // Initial display
+        updateDisplay();
     });
-
-    // validasi minimal pilih 1 kursi
-    if (bookingForm) {
-        bookingForm.addEventListener('submit', function (e) {
-            const checked = document.querySelectorAll('.seat-checkbox:checked').length;
-            if (checked === 0) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Peringatan',
-                    text: 'Pilih minimal 1 kursi!',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    }
 
     // ======================
     // Counter animation
@@ -212,7 +301,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { threshold: 0.3 });
         observer.observe(statsSection);
     }
-});
 
 // ======================
 // BOOKING: Konfirmasi update status di admin
@@ -270,5 +358,200 @@ document.querySelectorAll('form[action*="bookings"]').forEach(form => {
             }
         });
     });
+});
+
+// ======================
+// ADMIN: Delete confirmation for various entities
+// ======================
+document.addEventListener('DOMContentLoaded', function () {
+    // Delete confirmation for rute
+    const deleteFormsRute = document.querySelectorAll('.delete-form');
+    deleteFormsRute.forEach(form => {
+        if (form.querySelector('button').textContent.includes('Hapus')) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Yakin hapus rute ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        }
+    });
+
+    // Delete confirmation for mobil
+    const deleteFormsMobil = document.querySelectorAll('.delete-form');
+    deleteFormsMobil.forEach(form => {
+        if (form.querySelector('button').textContent.includes('Hapus')) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Yakin hapus data mobil ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        }
+    });
+
+    // Delete confirmation for pelanggan
+    const deleteFormsPelanggan = document.querySelectorAll('.delete-form');
+    deleteFormsPelanggan.forEach(form => {
+        if (form.querySelector('button').textContent.includes('Hapus')) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Yakin hapus pelanggan ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        }
+    });
+
+    // Delete confirmation for jadwals
+    const deleteFormsJadwals = document.querySelectorAll('.delete-form');
+    deleteFormsJadwals.forEach(form => {
+        if (form.querySelector('button').textContent.includes('Hapus')) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Yakin hapus jadwal ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        }
+    });
+
+    // Dashboard chart initialization
+    const dashboardChartCanvas = document.getElementById('chartPendapatan');
+    if (dashboardChartCanvas && dashboardChartCanvas.dataset.labels && dashboardChartCanvas.dataset.dashboard) {
+        const labels = JSON.parse(dashboardChartCanvas.dataset.labels);
+        const data = JSON.parse(dashboardChartCanvas.dataset.data);
+
+        new Chart(dashboardChartCanvas, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: data,
+                    borderColor: '#2563eb',
+                    backgroundColor: '#3b82f6',
+                    fill: false,
+                    tension: 0.3
+                }]
+            }
+        });
+    }
+
+    // Revenue visibility toggle (dashboard)
+    const toggleRevenueBtn = document.getElementById('toggle-revenue-visibility');
+    const revenueAmount = document.getElementById('revenue-amount');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    if (toggleRevenueBtn && revenueAmount && eyeIcon) {
+        let isVisible = true;
+        toggleRevenueBtn.addEventListener('click', function() {
+            isVisible = !isVisible;
+            if (isVisible) {
+                revenueAmount.style.display = 'block';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+            } else {
+                revenueAmount.style.display = 'none';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />';
+            }
+        });
+    }
+
+    // Revenue visibility toggle (laporan - total)
+    const toggleTotalRevenueBtn = document.getElementById('toggle-total-revenue-visibility');
+    const totalRevenueAmount = document.getElementById('total-revenue-amount');
+    const eyeIconTotal = document.getElementById('eye-icon-total');
+
+    if (toggleTotalRevenueBtn && totalRevenueAmount && eyeIconTotal) {
+        let isTotalVisible = true;
+        toggleTotalRevenueBtn.addEventListener('click', function() {
+            isTotalVisible = !isTotalVisible;
+            if (isTotalVisible) {
+                totalRevenueAmount.style.display = 'block';
+                eyeIconTotal.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+            } else {
+                totalRevenueAmount.style.display = 'none';
+                eyeIconTotal.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />';
+            }
+        });
+    }
+
+    // Revenue visibility toggle (laporan - monthly)
+    const toggleMonthlyRevenueBtn = document.getElementById('toggle-monthly-revenue-visibility');
+    const monthlyRevenueAmount = document.getElementById('monthly-revenue-amount');
+    const eyeIconMonthly = document.getElementById('eye-icon-monthly');
+
+    if (toggleMonthlyRevenueBtn && monthlyRevenueAmount && eyeIconMonthly) {
+        let isMonthlyVisible = true;
+        toggleMonthlyRevenueBtn.addEventListener('click', function() {
+            isMonthlyVisible = !isMonthlyVisible;
+            if (isMonthlyVisible) {
+                monthlyRevenueAmount.style.display = 'block';
+                eyeIconMonthly.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+            } else {
+                monthlyRevenueAmount.style.display = 'none';
+                eyeIconMonthly.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />';
+            }
+        });
+    }
+
+    // Laporan chart initialization
+    const laporanChartCanvas = document.getElementById('chartPendapatan');
+    if (laporanChartCanvas && laporanChartCanvas.dataset.labels && !laporanChartCanvas.dataset.dashboard) {
+        const labels = JSON.parse(laporanChartCanvas.dataset.labels);
+        const data = JSON.parse(laporanChartCanvas.dataset.data);
+
+        new Chart(laporanChartCanvas, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: data,
+                    backgroundColor: '#3b82f6'
+                }]
+            }
+        });
+    }
 });
 

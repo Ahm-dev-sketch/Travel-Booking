@@ -30,14 +30,17 @@ class JadwalController extends Controller
     {
         $search = $request->input('search');
 
-        $jadwals = Jadwal::query()
+        $jadwals = Jadwal::with('rute')
             ->when($search, function ($query, $search) {
-                $query->where('tujuan', 'like', "%{$search}%")
-                    ->orWhere('tanggal', 'like', "%{$search}%")
-                    ->orWhere('jam', 'like', "%{$search}%");
+                $query->whereHas('rute', function ($q) use ($search) {
+                    $q->where('kota_asal', 'like', "%{$search}%")
+                      ->orWhere('kota_tujuan', 'like', "%{$search}%");
+                })
+                ->orWhere('tanggal', 'like', "%{$search}%")
+                ->orWhere('jam', 'like', "%{$search}%");
             })
             ->orderBy('tanggal')
-            ->get();
+            ->paginate(10);
 
         return view('user.jadwal', compact('jadwals', 'search'));
     }

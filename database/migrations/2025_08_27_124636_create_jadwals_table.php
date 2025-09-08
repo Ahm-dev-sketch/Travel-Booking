@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('jadwals', function (Blueprint $table) {
             $table->id();
-            $table->string('tujuan');
+            $table->string('kota_awal');
+            $table->string('kota_tujuan');
             $table->date('tanggal');
             $table->time('jam');
             $table->decimal('harga', 10, 2)->nullable();

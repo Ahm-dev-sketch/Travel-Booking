@@ -64,4 +64,9 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Pagination --}}
+    <div class="mt-6 flex justify-center" data-aos="fade-up" data-aos-delay="400">
+        {{ $bookings->links() }}
+    </div>
 @endsection

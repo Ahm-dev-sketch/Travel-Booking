@@ -44,8 +44,9 @@
             <table class="w-full border border-gray-200">
                 <thead class="bg-blue-600 text-white">
                     <tr>
+                        <th class="px-4 py-3 border">Kota Asal</th>
+                        <th class="px-4 py-3 border">Kota Tujuan</th>
                         <th class="px-4 py-3 border">Tanggal</th>
-                        <th class="px-4 py-3 border">Tujuan</th>
                         <th class="px-4 py-3 border">Jam</th>
                         <th class="px-4 py-3 border">Harga</th>
                     </tr>
@@ -53,16 +54,22 @@
                 <tbody class="text-center">
                     @foreach ($jadwals as $index => $jadwal)
                         <tr class="hover:bg-gray-50" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                            <td class="px-4 py-2 border">{{ $jadwal->rute->kota_asal ?? '-' }}</td>
+                            <td class="px-4 py-2 border">{{ $jadwal->rute->kota_tujuan ?? '-' }}</td>
                             <td class="px-4 py-2 border">
                                 {{ \Carbon\Carbon::parse($jadwal->tanggal)->format('d M Y') }}
                             </td>
-                            <td class="px-4 py-2 border">{{ $jadwal->tujuan }}</td>
                             <td class="px-4 py-2 border">{{ $jadwal->jam }}</td>
                             <td class="px-4 py-2 border">Rp {{ number_format($jadwal->harga, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        {{-- Pagination --}}
+        <div class="mt-4 flex justify-end w-full pr-4" data-aos="fade-up" data-aos-delay="400">
+            {{ $jadwals->links() }}
         </div>
     @endif
 @endsection

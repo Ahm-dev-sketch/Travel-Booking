@@ -36,8 +36,12 @@
             {{-- Harga Tiket --}}
             <div>
                 <label for="harga_tiket" class="block text-sm font-medium text-gray-700">Harga Tiket</label>
-                <input type="text" id="harga_tiket" name="harga_tiket" value="{{ old('harga_tiket') }}" required
-                       class="mt-1 block w-full border rounded p-2 focus:ring focus:ring-blue-300 focus:outline-none">
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 font-medium">RP</span>
+                    <input type="text" id="harga_tiket" name="harga_tiket" value="{{ old('harga_tiket') }}" required
+                           class="pl-12 block w-full border rounded p-2 focus:ring focus:ring-blue-300 focus:outline-none"
+                           placeholder="0">
+                </div>
             </div>
 
             {{-- Status Rute --}}
@@ -67,8 +71,40 @@
 
 @push('scripts')
 <script>
+// Function to format number with Indonesian format (dots as thousands separator)
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Function to unformat number (remove dots)
+function unformatNumber(str) {
+    return str.replace(/\./g, '');
+}
+
+document.getElementById('harga_tiket').addEventListener('input', function(e) {
+    let value = e.target.value;
+
+    // Remove any non-numeric characters except dots
+    value = value.replace(/[^\d.]/g, '');
+
+    // Remove existing dots to reformat
+    value = unformatNumber(value);
+
+    // Format with dots
+    if (value) {
+        value = formatNumber(value);
+    }
+
+    e.target.value = value;
+});
+
 document.getElementById('formRute').addEventListener('submit', function(e) {
     e.preventDefault(); // stop submit dulu
+
+    // Remove formatting before submit
+    const hargaInput = document.getElementById('harga_tiket');
+    hargaInput.value = unformatNumber(hargaInput.value);
+
     Swal.fire({
         title: 'Apakah kamu yakin?',
         text: "Data rute akan ditambahkan!",
@@ -80,9 +116,3 @@ document.getElementById('formRute').addEventListener('submit', function(e) {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            e.target.submit();
-        }
-    });
-});
-</script>
-@endpush

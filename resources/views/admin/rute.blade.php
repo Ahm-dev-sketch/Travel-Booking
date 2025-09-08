@@ -86,7 +86,7 @@
                         <td class="px-4 py-2 border border-white">{{ $rute->kota_asal }}</td>
                         <td class="px-4 py-2 border border-white">{{ $rute->kota_tujuan }}</td>
                         <td class="px-4 py-2 border border-white">{{ $rute->jarak_estimasi }}</td>
-                        <td class="px-4 py-2 border border-white">{{ $rute->harga_tiket }}</td>
+                        <td class="px-4 py-2 border border-white">Rp {{ number_format(preg_replace('/[^\d]/', '', $rute->harga_tiket), 0, ',', '.') }}</td>
                         <td class="px-4 py-2 border border-white">
                             <span class="px-2 py-1 rounded text-sm bg-green-100 text-green-700">{{ $rute->status_rute }}</span>
                         </td>
@@ -117,27 +117,34 @@
         </table>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const deleteForms = document.querySelectorAll('.delete-form');
-            deleteForms.forEach(form => {
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Yakin hapus rute ini?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, hapus!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteForms = document.querySelectorAll('.delete-form');
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Yakin hapus rute ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
                 });
             });
         });
-    </script>
+    });
+</script>
+
+{{-- Pagination --}}
+<div class="mt-6 flex justify-center" data-aos="fade-up" data-aos-delay="400">
+    {{ $rutes->links() }}
+</div>
+@endpush
 @endsection

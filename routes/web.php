@@ -82,8 +82,17 @@ Route::post('password/reset/confirm', [AuthController::class, 'resetPassword'])-
 
 // Protected pages
 Route::middleware('auth')->group(function () {
-    Route::get('/pesan-tiket', [BookingController::class, 'create'])->name('pesan');
+    // Multi-step booking wizard
+    Route::get('/pesan-tiket', [BookingController::class, 'wizardStep1'])->name('pesan');
+    Route::post('/pesan-tiket/step1', [BookingController::class, 'processStep1'])->name('booking.step1');
+    Route::get('/pesan-tiket/step2', [BookingController::class, 'wizardStep2'])->name('booking.step2');
+    Route::post('/pesan-tiket/step2', [BookingController::class, 'processStep2'])->name('booking.step2.process');
+    Route::get('/pesan-tiket/step3', [BookingController::class, 'wizardStep3'])->name('booking.step3');
+    Route::post('/pesan-tiket/step3', [BookingController::class, 'processStep3'])->name('booking.step3.process');
+
     Route::get('/riwayat', [BookingController::class, 'index'])->name('riwayat');
+
+    // Legacy route for backward compatibility
     Route::post('/pesan-tiket', [BookingController::class, 'store'])->name('booking.store');
 
     // Added route for fetching booked seats dynamically

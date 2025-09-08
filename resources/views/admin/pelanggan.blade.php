@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-    @if(session('success'))
+    @if (session('success'))
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 Swal.fire({
@@ -99,7 +99,8 @@
                                 </a>
 
                                 {{-- Hapus --}}
-                                <form action="{{ route('admin.pelanggan.destroy', $customer) }}" method="POST" class="delete-form">
+                                <form action="{{ route('admin.pelanggan.destroy', $customer) }}" method="POST"
+                                    class="delete-form">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 flex items-center gap-1">
@@ -118,27 +119,8 @@
         </table>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const deleteForms = document.querySelectorAll('.delete-form');
-            deleteForms.forEach(form => {
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Yakin hapus pelanggan ini?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, hapus!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+    {{-- Pagination --}}
+    <div class="mt-6 flex justify-center" data-aos="fade-up" data-aos-delay="400">
+        {{ $customers->links() }}
+    </div>
 @endsection

@@ -16,33 +16,11 @@
 <body class="bg-gray-100 m-0 p-0">
 
     @if (session('success'))
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                Swal.fire({
-                    icon: "success",
-                    title: "Berhasil",
-                    text: "{{ session('success') }}",
-                    confirmButtonText: "OK",
-                    showConfirmButton: true,
-                    timer: null
-                });
-            });
-        </script>
+        <div data-success-message="{{ session('success') }}" style="display: none;"></div>
     @endif
 
     @if (session('error'))
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                Swal.fire({
-                    icon: "error",
-                    title: "Gagal",
-                    text: "{{ session('error') }}",
-                    confirmButtonText: "OK",
-                    showConfirmButton: true,
-                    timer: null
-                });
-            });
-        </script>
+        <div data-error-message="{{ session('error') }}" style="display: none;"></div>
     @endif
 
     <nav class="bg-blue-900 text-white shadow-md relative">
@@ -154,6 +132,7 @@
         @yield('footer')
     @endif
 
+    @stack('scripts')
 </body>
 
 </html>

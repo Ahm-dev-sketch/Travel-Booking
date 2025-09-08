@@ -1,19 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-    @if(session('success'))
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                Swal.fire({
-                    icon: "success",
-                    title: "Berhasil",
-                    text: "{{ session('success') }}",
-                    confirmButtonText: "OK",
-                    showConfirmButton: true,
-                    timer: null
-                });
-            });
-        </script>
+    @if (session('success'))
+        <div data-success-message="{{ session('success') }}" style="display: none;"></div>
     @endif
 
     <div class="flex items-center justify-between mb-6">
@@ -73,7 +62,8 @@
             <thead class="bg-blue-600 text-white">
                 <tr>
                     <th class="px-4 py-3 border border-white">ID</th>
-                    <th class="px-4 py-3 border border-white">Tujuan</th>
+                    <th class="px-4 py-3 border border-white">Kota Awal</th>
+                    <th class="px-4 py-3 border border-white">Kota Tujuan</th>
                     <th class="px-4 py-3 border border-white">Tanggal</th>
                     <th class="px-4 py-3 border border-white">Jam</th>
                     <th class="px-4 py-3 border border-white">Harga</th>
@@ -84,7 +74,9 @@
                 @forelse($jadwals as $jadwal)
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-2 border border-white">{{ $jadwal->id }}</td>
-                        <td class="px-4 py-2 border border-white">{{ $jadwal->tujuan }}</td>
+                        <td class="px-4 py-2 border border-white">{{ $jadwal->rute ? $jadwal->rute->kota_asal : '-' }}</td>
+                        <td class="px-4 py-2 border border-white">{{ $jadwal->rute ? $jadwal->rute->kota_tujuan : '-' }}
+                        </td>
                         <td class="px-4 py-2 border border-white">
                             {{ \Carbon\Carbon::parse($jadwal->tanggal)->format('d M Y') }}</td>
                         <td class="px-4 py-2 border border-white">{{ $jadwal->jam }}</td>
@@ -98,7 +90,8 @@
                                 </a>
 
                                 {{-- Hapus --}}
-                                <form action="{{ route('admin.jadwals.destroy', $jadwal) }}" method="POST" class="delete-form">
+                                <form action="{{ route('admin.jadwals.destroy', $jadwal) }}" method="POST"
+                                    class="delete-form">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 flex items-center gap-1">
@@ -117,28 +110,8 @@
         </table>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const deleteForms = document.querySelectorAll('.delete-form');
-            deleteForms.forEach(form => {
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Yakin hapus jadwal ini?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, hapus!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+    {{-- Pagination --}}
+    <div class="mt-4 flex justify-end w-full pr-4" data-aos="fade-up" data-aos-delay="400">
+        {{ $jadwals->links() }}
+    </div>
 @endsection
-</create_file>

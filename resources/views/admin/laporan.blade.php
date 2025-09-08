@@ -71,22 +71,6 @@
             </svg>
             Grafik Pendapatan (7 Hari Terakhir)
         </h3>
-        <canvas id="chartPendapatan" height="100"></canvas>
+        <canvas id="chartPendapatan" height="100" data-labels="{{ json_encode($labels7Hari) }}" data-data="{{ json_encode($pendapatan7Hari) }}"></canvas>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    const ctx = document.getElementById('chartPendapatan');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($labels7Hari) !!},
-            datasets: [{
-                label: 'Pendapatan',
-                data: {!! json_encode($pendapatan7Hari) !!},
-                backgroundColor: '#3b82f6'
-            }]
-        }
-    });
-    </script>
 @endsection

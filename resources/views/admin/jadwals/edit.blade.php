@@ -31,10 +31,17 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-                <label for="tujuan" class="block text-sm font-medium text-gray-700 mb-2">Tujuan</label>
-                <input type="text" name="tujuan" id="tujuan" value="{{ old('tujuan', $jadwal->tujuan) }}"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                @error('tujuan')
+                <label for="rute_id" class="block text-sm font-medium text-gray-700 mb-2">Rute</label>
+                <select id="rute_id" name="rute_id" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled>Pilih Rute</option>
+                    @foreach($rutes as $rute)
+                        <option value="{{ $rute->id }}" {{ old('rute_id', $jadwal->rute_id) == $rute->id ? 'selected' : '' }}>
+                            {{ $rute->kota_asal }} - {{ $rute->kota_tujuan }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('rute_id')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
