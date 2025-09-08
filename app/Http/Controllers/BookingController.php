@@ -93,10 +93,12 @@ class BookingController extends Controller
 
             // Simpan tiap kursi sebagai booking dengan status pending
             $booking = Booking::create([
-                'user_id'    => Auth::id(),
-                'jadwal_id'  => $jadwal->id,
-                'seat_number' => $seat,
-                'status'     => 'pending',
+                'user_id'       => Auth::id(),
+                'jadwal_id'     => $jadwal->id,
+                'seat_number'   => $seat,
+                'status'        => 'pending',
+                'jadwal_tanggal' => $jadwal->tanggal,
+                'jadwal_jam'    => $jadwal->jam,
             ]);
 
             if (!$firstBooking) {

@@ -269,6 +269,175 @@ class AdminController extends Controller
         ]);
     }
 
+    // Data Rute
+    public function rute(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = \App\Models\Rute::query();
+
+        if ($search) {
+            $query->where('kota_asal', 'like', "%{$search}%")
+                  ->orWhere('kota_tujuan', 'like', "%{$search}%")
+                  ->orWhere('jarak_estimasi', 'like', "%{$search}%")
+                  ->orWhere('harga_tiket', 'like', "%{$search}%")
+                  ->orWhere('status_rute', 'like', "%{$search}%");
+        }
+
+        $rutes = $query->latest()->get();
+
+        return view('admin.rute', compact('rutes', 'search'));
+    }
+
+    // Form tambah rute
+    public function createRute()
+    {
+        return view('admin.rute.create');
+    }
+
+    // Simpan rute baru
+    public function storeRute(Request $request)
+    {
+        $request->validate([
+            'kota_asal' => 'required|string',
+            'kota_tujuan' => 'required|string',
+            'jarak_estimasi' => 'required|string',
+            'harga_tiket' => 'required|string',
+            'status_rute' => 'required|string',
+        ]);
+
+        \App\Models\Rute::create($request->only([
+            'kota_asal',
+            'kota_tujuan',
+            'jarak_estimasi',
+            'harga_tiket',
+            'status_rute',
+        ]));
+
+        return redirect()->route('admin.rute')->with('success', 'Rute berhasil ditambahkan');
+    }
+
+    // Form edit rute
+    public function editRute(\App\Models\Rute $rute)
+    {
+        return view('admin.rute.edit', compact('rute'));
+    }
+
+    // Update rute
+    public function updateRute(Request $request, \App\Models\Rute $rute)
+    {
+        $request->validate([
+            'kota_asal' => 'required|string',
+            'kota_tujuan' => 'required|string',
+            'jarak_estimasi' => 'required|string',
+            'harga_tiket' => 'required|string',
+            'status_rute' => 'required|string',
+        ]);
+
+        $rute->update($request->only([
+            'kota_asal',
+            'kota_tujuan',
+            'jarak_estimasi',
+            'harga_tiket',
+            'status_rute',
+        ]));
+
+        return redirect()->route('admin.rute')->with('success', 'Rute berhasil diperbarui');
+    }
+
+    // Hapus rute
+    public function destroyRute(\App\Models\Rute $rute)
+    {
+        $rute->delete();
+        return back()->with('success', 'Rute berhasil dihapus');
+    }
+
+    // Data Mobil
+    public function mobil(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = \App\Models\Mobil::query();
+
+        if ($search) {
+            $query->where('nomor_polisi', 'like', "%{$search}%")
+                  ->orWhere('jenis', 'like', "%{$search}%")
+                  ->orWhere('merk', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%");
+        }
+
+        $mobils = $query->latest()->get();
+
+        return view('admin.mobil', compact('mobils', 'search'));
+    }
+
+    // Form tambah mobil
+    public function createMobil()
+    {
+        return view('admin.mobil.create');
+    }
+
+    // Simpan mobil baru
+    public function storeMobil(Request $request)
+    {
+        $request->validate([
+            'nomor_polisi' => 'required|string|unique:mobils',
+            'jenis' => 'required|string',
+            'kapasitas' => 'required|integer|min:1',
+            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'merk' => 'required|string',
+            'status' => 'required|string',
+        ]);
+
+        \App\Models\Mobil::create($request->only([
+            'nomor_polisi',
+            'jenis',
+            'kapasitas',
+            'tahun',
+            'merk',
+            'status',
+        ]));
+
+        return redirect()->route('admin.mobil')->with('success', 'Mobil berhasil ditambahkan');
+    }
+
+    // Form edit mobil
+    public function editMobil(\App\Models\Mobil $mobil)
+    {
+        return view('admin.mobil.edit', compact('mobil'));
+    }
+
+    // Update mobil
+    public function updateMobil(Request $request, \App\Models\Mobil $mobil)
+    {
+        $request->validate([
+            'nomor_polisi' => 'required|string|unique:mobils,nomor_polisi,' . $mobil->id,
+            'jenis' => 'required|string',
+            'kapasitas' => 'required|integer|min:1',
+            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'merk' => 'required|string',
+            'status' => 'required|string',
+        ]);
+
+        $mobil->update($request->only([
+            'nomor_polisi',
+            'jenis',
+            'kapasitas',
+            'tahun',
+            'merk',
+            'status',
+        ]));
+
+        return redirect()->route('admin.mobil')->with('success', 'Mobil berhasil diperbarui');
+    }
+
+    // Hapus mobil
+    public function destroyMobil(\App\Models\Mobil $mobil)
+    {
+        $mobil->delete();
+        return back()->with('success', 'Mobil berhasil dihapus');
+    }
+
     // Update status booking
     public function updateBooking(Request $request, Booking $booking)
     {

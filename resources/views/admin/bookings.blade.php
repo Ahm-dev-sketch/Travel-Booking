@@ -27,16 +27,16 @@
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-3 text-center border border-white">{{ $booking->user->name }}</td>
                         <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal->tujuan }}</td>
-                        <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal->tanggal }}</td>
+                        <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal_tanggal }}</td>
                         <td class="px-6 py-3 text-center border border-white">{{ $booking->seat_number }}</td>
                         <td class="px-6 py-3 text-center border border-white">
                             <span
                                 class="px-3 py-1 rounded-full text-xs font-semibold
-                            {{ $booking->status == 'setuju'
-                                ? 'bg-green-100 text-green-700'
-                                : ($booking->status == 'batal'
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'bg-yellow-100 text-yellow-700') }}">
+                                {{ $booking->status == 'setuju'
+                                    ? 'bg-green-100 text-green-700'
+                                    : ($booking->status == 'batal'
+                                        ? 'bg-red-100 text-red-700'
+                                        : 'bg-yellow-100 text-yellow-700') }}">
                                 {{ ucfirst($booking->status) }}
                             </span>
                         </td>

@@ -213,3 +213,62 @@ document.addEventListener("DOMContentLoaded", () => {
         observer.observe(statsSection);
     }
 });
+
+// ======================
+// BOOKING: Konfirmasi update status di admin
+// ======================
+document.querySelectorAll('form[action*="bookings"]').forEach(form => {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const select = this.querySelector('select[name="status"]');
+        const selectedOption = select.options[select.selectedIndex];
+        const newStatus = selectedOption.value;
+        const statusText = selectedOption.text;
+
+        // ambil detail booking dari tabel
+        const row = this.closest('tr');
+        const userName = row.querySelector('td:nth-child(1)').textContent.trim();
+        const destination = row.querySelector('td:nth-child(2)').textContent.trim();
+        const date = row.querySelector('td:nth-child(3)').textContent.trim();
+
+        let confirmMessage = '';
+        let confirmTitle = '';
+
+        if (newStatus === 'setuju') {
+            confirmTitle = 'Konfirmasi Persetujuan';
+            confirmMessage = `Apakah Anda yakin ingin menyetujui pemesanan untuk:\n\nUser: ${userName}\nTujuan: ${destination}\nTanggal: ${date}\nStatus: ${statusText}?`;
+        } else if (newStatus === 'batal') {
+            confirmTitle = 'Konfirmasi Pembatalan';
+            confirmMessage = `Apakah Anda yakin ingin membatalkan pemesanan untuk:\n\nUser: ${userName}\nTujuan: ${destination}\nTanggal: ${date}\nStatus: ${statusText}?`;
+        } else {
+            confirmTitle = 'Konfirmasi Perubahan Status';
+            confirmMessage = `Apakah Anda yakin ingin mengubah status pemesanan untuk:\n\nUser: ${userName}\nTujuan: ${destination}\nTanggal: ${date}\nStatus: ${statusText}?`;
+        }
+
+        Swal.fire({
+            title: confirmTitle,
+            text: confirmMessage,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Memproses...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                this.submit();
+            }
+        });
+    });
+});
+

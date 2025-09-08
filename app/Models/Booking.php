@@ -11,6 +11,8 @@ class Booking extends Model
         'jadwal_id',
         'seat_number',
         'status',
+        'jadwal_tanggal',
+        'jadwal_jam',
     ];
 
     public function user()

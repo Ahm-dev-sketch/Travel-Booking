@@ -38,6 +38,22 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Laporan Pendapatan (tambahan fix)
     Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
+
+    // Data Rute
+    Route::get('/rute', [AdminController::class, 'rute'])->name('rute');
+    Route::get('/rute/create', [AdminController::class, 'createRute'])->name('rute.create');
+    Route::post('/rute', [AdminController::class, 'storeRute'])->name('rute.store');
+    Route::get('/rute/{rute}/edit', [AdminController::class, 'editRute'])->name('rute.edit');
+    Route::put('/rute/{rute}', [AdminController::class, 'updateRute'])->name('rute.update');
+    Route::delete('/rute/{rute}', [AdminController::class, 'destroyRute'])->name('rute.destroy');
+
+    // Data Mobil
+    Route::get('/mobil', [AdminController::class, 'mobil'])->name('mobil');
+    Route::get('/mobil/create', [AdminController::class, 'createMobil'])->name('mobil.create');
+    Route::post('/mobil', [AdminController::class, 'storeMobil'])->name('mobil.store');
+    Route::get('/mobil/{mobil}/edit', [AdminController::class, 'editMobil'])->name('mobil.edit');
+    Route::put('/mobil/{mobil}', [AdminController::class, 'updateMobil'])->name('mobil.update');
+    Route::delete('/mobil/{mobil}', [AdminController::class, 'destroyMobil'])->name('mobil.destroy');
 });
 
 // ==================== USER ROUTES ====================

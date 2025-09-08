@@ -58,6 +58,16 @@
                           {{ request()->routeIs('admin.laporan') ? 'bg-blue-800' : '' }}">
                     <i class="fa fa-file-invoice-dollar"></i> Laporan Pendapatan
                 </a>
+                <a href="{{ route('admin.rute') }}"
+                    class="flex items-center gap-2 py-2 px-3 rounded hover:bg-blue-700
+                          {{ request()->routeIs('admin.rute') ? 'bg-blue-800' : '' }}">
+                    <i class="fa fa-road"></i> Data Rute
+                </a>
+                <a href="{{ route('admin.mobil') }}"
+                    class="flex items-center gap-2 py-2 px-3 rounded hover:bg-blue-700
+                          {{ request()->routeIs('admin.mobil') ? 'bg-blue-800' : '' }}">
+                    <i class="fa fa-bus"></i> Data Mobil
+                </a>
             </nav>
 
             <div class="p-4 border-t border-blue-700">

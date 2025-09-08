@@ -26,10 +26,10 @@
                         @foreach ($items as $booking)
                             <tr class="hover:bg-gray-50" data-aos="fade-up">
                                 <td class="px-4 py-2 border">
-                                    {{ \Carbon\Carbon::parse($jadwal->tanggal)->format('d M Y') }}
+                                    {{ \Carbon\Carbon::parse($booking->jadwal_tanggal)->format('d M Y') }}
                                 </td>
                                 <td class="px-4 py-2 border">{{ $jadwal->tujuan }}</td>
-                                <td class="px-4 py-2 border">{{ $jadwal->jam }}</td>
+                                <td class="px-4 py-2 border">{{ $booking->jadwal_jam }}</td>
                                 <td class="px-4 py-2 border">{{ $booking->seat_number }}</td>
                                 <td class="px-4 py-2 border">
                                     <span
