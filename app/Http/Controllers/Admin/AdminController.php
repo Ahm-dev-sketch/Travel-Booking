@@ -147,14 +147,21 @@ class AdminController extends Controller
     {
         $search = $request->input('search');
 
-        $bookings = Booking::with(['user', 'jadwal'])
+        $bookings = Booking::with(['user', 'jadwal.rute', 'jadwal.mobil'])
             ->when($search, function($query, $search) {
                 return $query->whereHas('user', function($q) use ($search) {
                            $q->where('name', 'like', "%{$search}%");
                        })
+                       ->orWhereHas('jadwal.rute', function($q) use ($search) {
+                           $q->where('kota_asal', 'like', "%{$search}%")
+                             ->orWhere('kota_tujuan', 'like', "%{$search}%");
+                       })
                        ->orWhereHas('jadwal', function($q) use ($search) {
-                           $q->where('tujuan', 'like', "%{$search}%")
-                             ->orWhere('tanggal', 'like', "%{$search}%");
+                           $q->where('tanggal', 'like', "%{$search}%");
+                       })
+                       ->orWhereHas('jadwal.mobil', function($q) use ($search) {
+                           $q->where('merk', 'like', "%{$search}%")
+                             ->orWhere('nomor_polisi', 'like', "%{$search}%");
                        })
                        ->orWhere('seat_number', 'like', "%{$search}%")
                        ->orWhere('status', 'like', "%{$search}%");

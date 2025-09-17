@@ -21,13 +21,13 @@
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
 
-                {{-- Email --}}
-                <input type="email" name="email" placeholder="Alamat Email" value="{{ old('email') }}" required
-                    class="w-full border p-3 rounded focus:outline-none focus:ring focus:ring-blue-300">
+            {{-- WhatsApp Number --}}
+            <input type="tel" name="whatsapp_number" placeholder="Nomor WA" value="{{ old('whatsapp_number') }}" required
+                class="w-full border p-3 rounded focus:outline-none focus:ring focus:ring-blue-300">
 
-                {{-- Password --}}
-                <input type="password" name="password" placeholder="Kata Sandi" required
-                    class="w-full border p-3 rounded focus:outline-none focus:ring focus:ring-blue-300">
+            {{-- Password --}}
+            <input type="password" name="password" placeholder="Kata Sandi" required
+                class="w-full border p-3 rounded focus:outline-none focus:ring focus:ring-blue-300">
 
                 <button type="submit"
                     class="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition">

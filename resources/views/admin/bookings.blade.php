@@ -15,8 +15,11 @@
             <thead>
                 <tr class="bg-blue-600 text-white">
                     <th class="px-6 py-3 text-center border border-white">User</th>
-                    <th class="px-6 py-3 text-center border border-white">Tujuan</th>
+                    <th class="px-6 py-3 text-center border border-white">Kota Awal</th>
+                    <th class="px-6 py-3 text-center border border-white">Kota Tujuan</th>
                     <th class="px-6 py-3 text-center border border-white">Tanggal</th>
+                    <th class="px-6 py-3 text-center border border-white">Jam</th>
+                    <th class="px-6 py-3 text-center border border-white">Mobil</th>
                     <th class="px-6 py-3 text-center border border-white">Kursi</th>
                     <th class="px-6 py-3 text-center border border-white">Status</th>
                     <th class="px-6 py-3 text-center border border-white">Aksi</th>
@@ -26,8 +29,11 @@
                 @foreach ($bookings as $booking)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-3 text-center border border-white">{{ $booking->user->name }}</td>
-                        <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal->tujuan }}</td>
+                        <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal->rute ? $booking->jadwal->rute->kota_asal : '-' }}</td>
+                        <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal->rute ? $booking->jadwal->rute->kota_tujuan : '-' }}</td>
                         <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal_tanggal }}</td>
+                        <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal ? $booking->jadwal->jam : '-' }}</td>
+                        <td class="px-6 py-3 text-center border border-white">{{ $booking->jadwal->mobil ? $booking->jadwal->mobil->merk . ' (' . $booking->jadwal->mobil->nomor_polisi . ')' : '-' }}</td>
                         <td class="px-6 py-3 text-center border border-white">{{ $booking->seat_number }}</td>
                         <td class="px-6 py-3 text-center border border-white">
                             <span

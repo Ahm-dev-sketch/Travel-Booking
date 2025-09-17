@@ -11,7 +11,7 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'admin@travel.com'],
+            ['whatsapp_number' => '081234567890'],
             [
                 'name' => 'Administrator',
                 'password' => Hash::make('admin123'),

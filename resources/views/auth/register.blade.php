@@ -34,14 +34,7 @@
                     @enderror
                 </div>
 
-                {{-- Email --}}
-                <div>
-                    <input type="email" name="email" placeholder="Alamat Email" value="{{ old('email') }}" required
-                        class="w-full border p-3 rounded focus:outline-none focus:ring focus:ring-blue-300">
-                    @error('email')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+
 
                 {{-- WhatsApp Number --}}
                 <div>

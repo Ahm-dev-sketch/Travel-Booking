@@ -27,7 +27,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('whatsapp_number', 'password');
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -36,7 +36,7 @@ class AuthController extends Controller
                 : redirect()->route('home');
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah']);
+        return back()->withErrors(['whatsapp_number' => 'Nomor WhatsApp atau password salah']);
     }
 
     // === REGISTER ===
@@ -49,13 +49,12 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users',
             'whatsapp_number' => 'required|string|unique:users',
             'password' => 'required|confirmed|min:6',
         ]);
 
         // Simpan data registrasi di session untuk verifikasi OTP
-        $registrationData = $request->only(['name', 'email', 'whatsapp_number', 'password']);
+        $registrationData = $request->only(['name', 'whatsapp_number', 'password']);
         $request->session()->put('registration_data', $registrationData);
 
         // Kirim OTP ke WhatsApp (untuk registrasi, set isRegistration=true)
@@ -104,7 +103,6 @@ class AuthController extends Controller
         // Buat user account
         $user = User::create([
             'name' => $registrationData['name'],
-            'email' => $registrationData['email'],
             'whatsapp_number' => $registrationData['whatsapp_number'],
             'password' => Hash::make($registrationData['password']),
         ]);

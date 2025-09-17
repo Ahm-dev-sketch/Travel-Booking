@@ -14,7 +14,7 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with('jadwal')
+        $bookings = Booking::with(['jadwal.rute'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
