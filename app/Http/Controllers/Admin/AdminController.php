@@ -453,6 +453,86 @@ class AdminController extends Controller
         return back()->with('success', 'Mobil berhasil dihapus');
     }
 
+    // Data Supir
+    public function supir(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = \App\Models\Supir::query();
+
+        if ($search) {
+            $query->where('nama', 'like', "%{$search}%")
+                  ->orWhere('telepon', 'like', "%{$search}%")
+                  ->orWhereHas('mobil', function($q) use ($search) {
+                      $q->where('merk', 'like', "%{$search}%")
+                        ->orWhere('nomor_polisi', 'like', "%{$search}%");
+                  });
+        }
+
+        $supirs = $query->with('mobil')->latest()->paginate(10);
+
+        return view('admin.supir', compact('supirs', 'search'));
+    }
+
+    // Form tambah supir
+    public function createSupir()
+    {
+        $mobils = \App\Models\Mobil::whereDoesntHave('supir')->get();
+        return view('admin.supir.create', compact('mobils'));
+    }
+
+    // Simpan supir baru
+    public function storeSupir(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'telepon' => 'nullable|string|max:20',
+            'mobil_id' => 'required|exists:mobils,id|unique:supirs,mobil_id',
+        ]);
+
+        \App\Models\Supir::create($request->only([
+            'nama',
+            'telepon',
+            'mobil_id',
+        ]));
+
+        return redirect()->route('admin.supir')->with('success', 'Supir berhasil ditambahkan');
+    }
+
+    // Form edit supir
+    public function editSupir(\App\Models\Supir $supir)
+    {
+        $mobils = \App\Models\Mobil::whereDoesntHave('supir')
+            ->orWhere('id', $supir->mobil_id)
+            ->get();
+        return view('admin.supir.edit', compact('supir', 'mobils'));
+    }
+
+    // Update supir
+    public function updateSupir(Request $request, \App\Models\Supir $supir)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'telepon' => 'nullable|string|max:20',
+            'mobil_id' => 'required|exists:mobils,id|unique:supirs,mobil_id,' . $supir->id,
+        ]);
+
+        $supir->update($request->only([
+            'nama',
+            'telepon',
+            'mobil_id',
+        ]));
+
+        return redirect()->route('admin.supir')->with('success', 'Supir berhasil diperbarui');
+    }
+
+    // Hapus supir
+    public function destroySupir(\App\Models\Supir $supir)
+    {
+        $supir->delete();
+        return back()->with('success', 'Supir berhasil dihapus');
+    }
+
     // Update status booking
     public function updateBooking(Request $request, Booking $booking)
     {

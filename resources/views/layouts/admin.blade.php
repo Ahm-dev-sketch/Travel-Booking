@@ -69,6 +69,11 @@
                           {{ request()->routeIs('admin.mobil') ? 'bg-blue-800' : '' }}">
                     <i class="fa fa-bus"></i> Data Mobil
                 </a>
+                <a href="{{ route('admin.supir') }}"
+                    class="flex items-center gap-2 py-2 px-3 rounded hover:bg-blue-700
+                          {{ request()->routeIs('admin.supir') ? 'bg-blue-800' : '' }}">
+                    <i class="fa fa-user"></i> Data Supir
+                </a>
             </nav>
 
             <div class="p-4 border-t border-blue-700">

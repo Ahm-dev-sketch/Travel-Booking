@@ -1,0 +1,166 @@
+TRAVEL BOOKING SYSTEM - PANDUAN STARTER PROJECT
+==============================================
+
+OVERVIEW
+--------
+Ini adalah sistem pemesanan tiket travel berbasis Laravel untuk reservasi bus/kereta. Sistem ini mendukung registrasi/login user via WhatsApp OTP, wizard pemesanan multi-langkah, dan panel admin untuk mengelola jadwal, rute, kendaraan, dan pemesanan.
+
+TEKNOLOGI YANG DIGUNAKAN
+-----------------------
+- Framework: Laravel 12.x
+- Database: MySQL
+- Autentikasi: WhatsApp OTP + Session-based
+- Frontend: Blade templates + Tailwind CSS
+- Testing: PHPUnit dengan unit test dan feature test komprehensif
+- Notifikasi: Integrasi WhatsApp API
+
+STRUKTUR PROJECT
+---------------
+travel-booking/
+├── app/
+│   ├── Console/Commands/          # Perintah Artisan
+│   ├── Http/Controllers/          # Controller
+│   │   ├── Admin/                 # Controller admin
+│   │   ├── AuthController.php     # Autentikasi
+│   │   ├── BookingController.php  # Wizard pemesanan
+│   │   └── JadwalController.php   # Tampilan jadwal
+│   ├── Mail/                      # Template email
+│   ├── Models/                    # Model Eloquent
+│   │   ├── Booking.php
+│   │   ├── Jadwal.php (Jadwal)
+│   │   ├── Mobil.php (Kendaraan)
+│   │   ├── Rute.php (Rute)
+│   │   ├── Supir.php (Supir)
+│   │   ├── User.php
+│   │   └── OtpToken.php
+│   └── Services/                  # Service logika bisnis
+│       ├── OtpService.php
+│       └── WhatsappService.php
+├── database/
+│   ├── factories/                 # Factory untuk testing
+│   ├── migrations/                # Skema database
+│   └── seeders/                   # Database seeders
+├── public/                        # Asset statis
+├── resources/
+│   ├── css/                       # Stylesheet
+│   ├── js/                        # JavaScript
+│   └── views/                     # Template Blade
+├── routes/
+│   └── web.php                    # Definisi route
+└── tests/                         # Test suite
+    ├── Feature/                   # Feature test
+    └── Unit/                      # Unit test
+
+INSTALASI & SETUP
+----------------
+1. Clone repository
+2. Install dependencies: composer install && npm install
+3. Copy .env.example ke .env dan konfigurasi:
+   - Koneksi database
+   - Kredensial WhatsApp API
+   - Pengaturan mail
+4. Generate app key: php artisan key:generate
+5. Jalankan migrasi: php artisan migrate
+6. Seed database: php artisan db:seed
+7. Build asset: npm run build
+8. Jalankan server: php artisan serve
+
+FITUR UTAMA
+-----------
+1. Autentikasi User
+   - Registrasi/login via WhatsApp OTP
+   - Reset password via OTP
+   - Role-based access (user/admin)
+
+2. Sistem Pemesanan
+   - Wizard pemesanan multi-langkah
+   - Ketersediaan kursi real-time
+   - Manajemen status pemesanan
+   - Notifikasi admin otomatis
+
+3. Panel Admin
+   - Dashboard dengan statistik
+   - Operasi CRUD untuk:
+     - Jadwal
+     - Rute
+     - Kendaraan (Mobil)
+     - Supir
+     - User
+   - Manajemen pemesanan
+   - Laporan pendapatan
+
+4. Integrasi WhatsApp
+   - Notifikasi OTP
+   - Alert pemesanan ke admin
+   - Pesan layanan pelanggan
+
+SKEMA DATABASE
+--------------
+- users: Akun user dengan autentikasi WhatsApp
+- rutes: Rute perjalanan (asal, tujuan, jarak, harga)
+- mobils: Kendaraan (plat nomor, jenis, kapasitas, status)
+- supirs: Supir (nama, telepon, kendaraan yang ditugaskan)
+- jadwals: Jadwal (rute, kendaraan, tanggal, waktu, harga)
+- bookings: Reservasi (user, jadwal, kursi, status)
+- otp_tokens: Kode OTP untuk autentikasi
+
+TESTING
+-------
+Jalankan semua test: php artisan test
+- 71 test yang mencakup semua model, service, dan controller
+- Unit test untuk logika bisnis
+- Feature test untuk endpoint HTTP
+- Coverage test 100% untuk fungsi kritis
+
+ENDPOINT API
+------------
+Route Publik:
+- GET / - Halaman utama
+- GET /jadwal - Lihat jadwal
+- GET/POST /login - Autentikasi
+- GET/POST /register - Registrasi dengan OTP
+
+Route Protected (Auth Required):
+- GET/POST /pesan-tiket - Wizard pemesanan (3 langkah)
+- GET /riwayat - Riwayat pemesanan
+- PATCH /booking/{id}/status - Update status pemesanan
+
+Route Admin (Role Admin Required):
+- GET /admin - Dashboard
+- CRUD /admin/jadwals - Kelola jadwal
+- CRUD /admin/rute - Kelola rute
+- CRUD /admin/mobil - Kelola kendaraan
+- CRUD /admin/supir - Kelola supir
+- CRUD /admin/pelanggan - Kelola pelanggan
+- GET /admin/bookings - Lihat pemesanan
+- PUT /admin/bookings/{id} - Update status pemesanan
+- GET /admin/laporan - Laporan pendapatan
+
+CATATAN DEVELOPMENT
+------------------
+- Semua model menggunakan relasi Eloquent
+- Controller mengikuti konvensi Laravel
+- Service menangani pemisahan logika bisnis
+- Test suite komprehensif memastikan reliabilitas
+- Integrasi WhatsApp API untuk notifikasi
+- Design responsif dengan Tailwind CSS
+- Autentikasi berbasis session dengan verifikasi OTP
+
+DEPLOYMENT
+----------
+1. Setup environment production
+2. Konfigurasi database dan WhatsApp API
+3. Jalankan migrasi dan seeder
+4. Setup web server (Nginx)
+5. Konfigurasi SSL certificate
+6. Setup cron job untuk tugas cleanup
+7. Monitor log dan performa
+
+SUPPORT
+-------
+Untuk dukungan development, lihat:
+- Dokumentasi Laravel: https://laravel.com/docs
+- PHPUnit testing: https://phpunit.de/
+- WhatsApp Business API docs
+
+Project ini mendemonstrasikan praktik development PHP modern dengan testing komprehensif, arsitektur bersih, dan integrasi real-world.

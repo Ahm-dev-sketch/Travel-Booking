@@ -64,6 +64,12 @@
                         </div>
                     </div>
                     <div>
+                        <div class="text-sm text-gray-600 mb-1">Supir</div>
+                        <div class="font-medium">
+                            {{ $jadwal->mobil->supir->nama ?? 'N/A' }}
+                        </div>
+                    </div>
+                    <div>
                         <div class="text-sm text-gray-600 mb-1">Harga per Kursi</div>
                         <div class="font-medium">Rp {{ number_format($jadwal->harga, 0, ',', '.') }}</div>
                     </div>

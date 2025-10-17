@@ -5,15 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Rute extends Model
+class Supir extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'kota_asal',
-        'kota_tujuan',
-        'jarak_estimasi',
-        'harga_tiket',
-        'status_rute',
+        'nama',
+        'telepon',
+        'mobil_id',
     ];
+
+    public function mobil()
+    {
+        return $this->belongsTo(Mobil::class);
+    }
 }

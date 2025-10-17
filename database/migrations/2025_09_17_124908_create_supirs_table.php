@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropUnique(['email']);
-            $table->dropColumn('email');
+        Schema::create('supirs', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->string('telepon')->nullable();
+            $table->foreignId('mobil_id')->unique()->constrained('mobils')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -22,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('email')->unique();
-        });
+        Schema::dropIfExists('supirs');
     }
 };

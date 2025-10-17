@@ -54,6 +54,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/mobil/{mobil}/edit', [AdminController::class, 'editMobil'])->name('mobil.edit');
     Route::put('/mobil/{mobil}', [AdminController::class, 'updateMobil'])->name('mobil.update');
     Route::delete('/mobil/{mobil}', [AdminController::class, 'destroyMobil'])->name('mobil.destroy');
+
+    // Data Supir
+    Route::get('/supir', [AdminController::class, 'supir'])->name('supir');
+    Route::get('/supir/create', [AdminController::class, 'createSupir'])->name('supir.create');
+    Route::post('/supir', [AdminController::class, 'storeSupir'])->name('supir.store');
+    Route::get('/supir/{supir}/edit', [AdminController::class, 'editSupir'])->name('supir.edit');
+    Route::put('/supir/{supir}', [AdminController::class, 'updateSupir'])->name('supir.update');
+    Route::delete('/supir/{supir}', [AdminController::class, 'destroySupir'])->name('supir.destroy');
 });
 
 // ==================== USER ROUTES ====================
@@ -94,6 +102,9 @@ Route::middleware('auth')->group(function () {
 
     // Legacy route for backward compatibility
     Route::post('/pesan-tiket', [BookingController::class, 'store'])->name('booking.store');
+
+    // Update booking status
+    Route::patch('/booking/{booking}/status', [BookingController::class, 'updateStatus'])->name('booking.update.status');
 
     // Added route for fetching booked seats dynamically
     Route::get('/jadwal/{jadwal}/seats', [JadwalController::class, 'getBookedSeats']);

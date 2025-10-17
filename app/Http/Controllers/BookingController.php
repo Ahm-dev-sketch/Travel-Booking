@@ -116,7 +116,7 @@ class BookingController extends Controller
             return redirect()->route('pesan')->with('error', 'Silakan mulai dari langkah pertama');
         }
 
-        $jadwal = \App\Models\Jadwal::with('mobil')->find($step2Data['jadwal']->id);
+        $jadwal = \App\Models\Jadwal::with('mobil.supir')->find($step2Data['jadwal']->id);
 
         // Kursi yang sudah dibooking dengan status setuju (approved)
         $bookedSeats = Booking::where('jadwal_id', $jadwal->id)
