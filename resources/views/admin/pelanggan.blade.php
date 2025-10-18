@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
     @if (session('success'))
@@ -82,7 +82,7 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-2 border border-white">{{ $customer->id }}</td>
                         <td class="px-4 py-2 border border-white">{{ $customer->name }}</td>
-                        <td class="px-4 py-2 border border-white">{{ $customer->email }}</td>
+                        <td class="px-4 py-2 border border-white">{{ $customer->whatsapp_number }}</td>
                         <td class="px-4 py-2 border border-white capitalize">
                             <span
                                 class="px-2 py-1 rounded text-sm

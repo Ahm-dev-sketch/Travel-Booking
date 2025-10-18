@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
     <h1 class="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -25,10 +25,10 @@
 
             {{-- Email --}}
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email', $customer->email) }}" required
+                <label for="whatsapp_number" class="block text-sm font-medium text-gray-700">Nomor WhatsApp</label>
+                <input type="text" id="whatsapp_number" name="whatsapp_number" value="{{ old('whatsapp_number', $customer->whatsapp_number) }}" required
                        class="mt-1 block w-full border rounded p-2 focus:ring focus:ring-blue-300 focus:outline-none">
-                @error('email')
+                @error('whatsapp_number')
                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                 @enderror
             </div>

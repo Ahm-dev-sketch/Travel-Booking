@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropUnique(['email']);
-            $table->dropColumn('email');
+            $table->dropColumn(['email', 'email_verified_at', 'remember_token']);
         });
     }
 
@@ -24,6 +24,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
         });
     }
 };

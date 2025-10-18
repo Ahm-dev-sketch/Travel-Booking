@@ -183,7 +183,6 @@ class AuthController extends Controller
 
         // Update password
         $user->password = Hash::make($request->password);
-        $user->setRememberToken(Str::random(60));
         $user->save();
 
         // Clear session

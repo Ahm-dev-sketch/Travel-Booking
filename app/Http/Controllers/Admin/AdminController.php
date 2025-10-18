@@ -177,7 +177,7 @@ class AdminController extends Controller
 
         $customers = User::when($search, function($query, $search) {
             return $query->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%")
+                         ->orWhere('whatsapp_number', 'like', "%{$search}%")
                          ->orWhere('role', 'like', "%{$search}%");
         })->paginate(10);
 
@@ -195,11 +195,11 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $customer->id,
+            'whatsapp_number' => 'required|string|unique:users,whatsapp_number,' . $customer->id,
             'role' => 'required|in:user,admin'
         ]);
 
-        $customer->update($request->only(['name', 'email', 'role']));
+        $customer->update($request->only(['name', 'whatsapp_number', 'role']));
 
         return redirect()->route('admin.pelanggan')->with('success', 'Data pelanggan berhasil diperbarui');
     }
@@ -215,12 +215,12 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'whatsapp_number' => 'required|string|unique:users,whatsapp_number',
             'password' => 'required|min:6',
             'role' => 'required|in:user,admin'
         ]);
 
-        $userData = $request->only(['name', 'email', 'role']);
+        $userData = $request->only(['name', 'whatsapp_number', 'role']);
         $userData['password'] = bcrypt($request->password);
 
         User::create($userData);
@@ -543,13 +543,14 @@ class AdminController extends Controller
         $oldStatus = $booking->status;
         $booking->update(['status' => $request->status]);
 
-        // Kirim notifikasi email jika status berubah
+        // Kirim notifikasi whatsapp jika status berubah
         if ($oldStatus !== $request->status) {
             try {
-                Mail::to($booking->user->email)->send(new BookingStatusUpdated($booking));
+                // TODO: Implement whatsapp notification
+                // Mail::to($booking->user->whatsapp_number)->send(new BookingStatusUpdated($booking));
             } catch (\Exception $e) {
-                // Log error jika email gagal dikirim, tapi tetap lanjutkan proses
-                Log::error('Gagal mengirim email notifikasi: ' . $e->getMessage());
+                // Log error jika whatsapp gagal dikirim, tapi tetap lanjutkan proses
+                Log::error('Gagal mengirim whatsapp notifikasi: ' . $e->getMessage());
             }
         }
 
